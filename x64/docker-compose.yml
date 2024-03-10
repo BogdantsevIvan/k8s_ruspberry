@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  mplc:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+      - 8081:30550
+    # volumes:
+    #   - ./1.3.3:/tmp
+    # stdin_open: true
+    # tty: true
