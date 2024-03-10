@@ -34,4 +34,11 @@
  ```bash
    terraform destroy -auto-approve -var-file="./my-variables.tfvars"
    ```
+
+## Запуск создания кластера k8s
+1. 5. Из директории ansible выполнить:
+   ```bash
+   ansible-playbook -i inventory make_cluster.yml
+   ```
+
 ---

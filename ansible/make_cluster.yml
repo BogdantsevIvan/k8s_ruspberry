@@ -1,0 +1,28 @@
+- name: install docker and kubectl
+  hosts: [k8s_master, k8s_workers]
+  become: true
+  remote_user: ubuntu
+  roles:
+    - docker_install
+    - k8s_install
+
+- name: create cluster
+  hosts: k8s_master
+  become: true
+  remote_user: ubuntu
+  roles:
+    - k8s_create_cluster
+
+- name: node invite
+  hosts: k8s_workers
+  become: true
+  remote_user: ubuntu
+  roles:
+    - node_invite
+
+- name: create dashboard
+  hosts: k8s_master
+  become: true
+  remote_user: ubuntu
+  roles:
+    - k8s_dashboard
