@@ -9,16 +9,17 @@
   shell: "{{ item }}"
   become_user: ubuntu
   with_items:
-   - mkdir -p $HOME/.kube
-   - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-   - sudo chown $(id -u):$(id -g) $HOME/.kube/config
+    - mkdir -p $HOME/.kube
+    - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    - sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 - name: Install calico pod network # устанавливаем calico pod network
   become: false
   shell: "{{ item }}"
   with_items:
-   - curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml -O
-   - kubectl apply -f calico.yaml
+    - curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml -O
+    - kubectl apply -f calico.yaml --validate=false
+  retries: 3
 
 - name: Generate join command # показываем команду с добавлением ноды и записываем ее в переменную
   become_user: ubuntu

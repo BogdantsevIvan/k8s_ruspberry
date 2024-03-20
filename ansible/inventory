@@ -1,6 +1,7 @@
 [k8s_master]
-master1 ansible_user=my-user ansible_host=
+master1 ansible_user=ubuntu ansible_host=127.0.0.1
    
 [k8s_workers]
-worker1 ansible_user=my-user ansible_host=178.154.207.77
-worker2 ansible_user=my-user ansible_host=178.154.206.30
+worker1 ansible_user=ubuntu ansible_host=51.250.10.101
+worker2 ansible_user=ubuntu ansible_host=51.250.79.214
+worker3 ansible_user=ubuntu ansible_host=84.252.129.192

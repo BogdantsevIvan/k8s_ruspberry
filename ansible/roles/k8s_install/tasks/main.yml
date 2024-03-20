@@ -2,28 +2,35 @@
 # tasks file for k8s
 - name: install k8s dependencies # устанавливаем зависимости для kubernetes
   apt:
-    name: 
+    name:
       - ca-certificates
       - curl
       - apt-transport-https
-      - keepalived 
+      - keepalived
       - haproxy
     state: present
     update_cache: yes
 
+- name: get information about the directory
+  stat:
+    path: /path/to/your/directory
+  register: dir_info
+
 - name: create folder for keyrings # cоздаем папку keyrings, потому что в ubuntu раньше 22 версии нет данной папки
   command: sudo mkdir -m 755 /etc/apt/keyrings
+  when: ! dir_info.stat.exists
 
 - name: add gpg key # добавляем ключ
-  apt_key:
-    url: "{{ k8s_gpg_key }}"
-    state: present
-    keyring: /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+  shell:
+    cmd: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 - name: add repository # добавляем репозиторий
-  apt_repository: 
-    repo: "{{ k8s_apt_repo }}"
-    state: present
+  shell:
+    cmd: echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+- name: update apt
+  apt:
+    update_cache: yes
 
 - name: install k8s # устанавливаем kubernetes
   apt:
@@ -31,16 +38,16 @@
       - kubectl
       - kubeadm
       - kubelet
-    
+
 - name: restart kubelet # презапускаем kubelet
   service:
     name: kubelet
     state: restarted
 
-- name: Enable CRI plugin in containerd # замена строки на включение плагина CRI 
+- name: Enable CRI plugin in containerd # замена строки на включение плагина CRI
   lineinfile:
     path: /etc/containerd/config.toml
-    regexp: '^disabled_plugins'
+    regexp: "^disabled_plugins"
     line: enable_plugins=["cri"]
     state: present
 
