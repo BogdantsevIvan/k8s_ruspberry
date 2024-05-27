@@ -36,9 +36,30 @@
    ```
 
 ## Запуск создания кластера k8s
-1. 5. Из директории ansible выполнить:
+1. Из директории ansible выполнить:
    ```bash
    ansible-playbook -i inventory make_cluster.yml
    ```
 
+## Сборка образа mplc
+1. Из директории x64 выполнить:
+   ```bash
+   docker build -t mplc ./
+   ```
+2. Создать тег для образа
+   ```bash
+   docker tag mplc <remote repo and tag>
+   ```
+   
+3. Загрузить образ в удаленное хранилище
+   ```bash
+   docker push <remote repo and tag>
+   ```
+
+## Запуск mplc в k8s
+1. В файле manifests/app1.yml заменить название образа и ip адрес балансировщикаы
+2. Из директории manifests выполнить:
+   ```bash
+   kubectl apply -f app1.yml
+   ```
 ---

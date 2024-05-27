@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment
+  labels:
+    app: my-k8s-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: mplc
+  template:
+    metadata:
+      labels:
+        project: mplc # Service will look for those PODS Labels!!!
+    spec:
+      containers:
+        - name: mplc-web
+          image: ivanbogdantsev/mplc:1.0.1
+          ports:
+            - containerPort: 80
+            - containerPort: 30550
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-single-pod-service
+  labels:
+    env: prod
+    owner: DenisAstahov
+spec:
+  selector:
+    project: mplc # Selecting PODS with those Labels
+  externalIPs: ["192.168.0.110"]
+  ports:
+    - name: app-listener-1
+      protocol: TCP
+      port: 8080 # Port on Load Balancer
+      targetPort: 80 # Port on POD
+    - name: app-listener-2
+      protocol: TCP
+      port: 30550 # Port on Load Balancer
+      targetPort: 30550 # Port on POD
+    - name: app-listener-3
+      protocol: UDP
+      port: 30550 # Port on Load Balancer
+      targetPort: 30550 # Port on POD
+  type: LoadBalancer
